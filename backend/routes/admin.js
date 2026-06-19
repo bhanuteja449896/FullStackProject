@@ -75,7 +75,7 @@ router.post('/users', verifyToken, checkPermission('create:users'), async (req, 
         'CREATE_USER',
         'users',
         newUser.id,
-        req.ip,
+        req.cleanedIp,
         req.headers['user-agent'] || 'Unknown',
         JSON.stringify({ email: newUser.email, role: roleName })
       ]
@@ -119,7 +119,7 @@ router.delete('/users/:id', verifyToken, checkPermission('delete:users'), async 
         'DELETE_USER',
         'users',
         id,
-        req.ip,
+        req.cleanedIp,
         req.headers['user-agent'] || 'Unknown',
         JSON.stringify({ email })
       ]

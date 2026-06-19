@@ -11,9 +11,22 @@ const adminRoutes = require('./routes/admin');
 
 const app = express();
 
-// Middleware
 app.use(express.json());
 app.use(cookieParser());
+
+// Clean IP Address middleware to prevent PostgreSQL INET parsing crashes on Vercel
+app.use((req, res, next) => {
+  let ip = req.headers['x-forwarded-for'] || (req.socket ? req.socket.remoteAddress : '') || '';
+  if (ip) {
+    ip = ip.split(',')[0].trim();
+    if (ip.startsWith('::ffff:')) {
+      ip = ip.substring(7);
+    }
+  }
+  const isValidIp = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ip) || /^[0-9a-fA-F:]+$/.test(ip);
+  req.cleanedIp = isValidIp ? ip : '127.0.0.1';
+  next();
+});
 
 // Enable CORS for local development and Vercel deployments
 const allowedOrigins = [

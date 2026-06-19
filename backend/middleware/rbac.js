@@ -50,7 +50,7 @@ const checkPermission = (requiredPermission) => {
               req.user.userId,
               'PERMISSION_DENIED',
               requiredPermission,
-              req.ip,
+              req.cleanedIp,
               req.headers['user-agent'] || 'Unknown'
             ]
           );

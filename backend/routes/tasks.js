@@ -97,7 +97,7 @@ router.post('/', verifyToken, checkPermission('create:tasks'), async (req, res) 
     await db.query(
       `INSERT INTO audit_logs (user_id, action, resource, resource_id, ip_address, user_agent)
        VALUES ($1, $2, $3, $4, $5, $6)`,
-      [req.user.userId, 'CREATE', 'tasks', task.id, req.ip, req.headers['user-agent'] || 'Unknown']
+      [req.user.userId, 'CREATE', 'tasks', task.id, req.cleanedIp, req.headers['user-agent'] || 'Unknown']
     );
 
     res.status(201).json({ task });
@@ -144,7 +144,7 @@ router.put('/:id', verifyToken, checkPermission('update:tasks'), async (req, res
           'tasks',
           id,
           JSON.stringify({ status: { old: task.status, new: status } }),
-          req.ip,
+          req.cleanedIp,
           req.headers['user-agent'] || 'Unknown'
         ]
       );
@@ -180,7 +180,7 @@ router.put('/:id', verifyToken, checkPermission('update:tasks'), async (req, res
             before: { title: task.title, description: task.description, status: task.status, priority: task.priority, assigned_to: task.assigned_to, due_date: task.due_date },
             after: { title: title || task.title, description: description, status: status, priority: priority, assigned_to: assignedTo, due_date: dueDate }
           }),
-          req.ip,
+          req.cleanedIp,
           req.headers['user-agent'] || 'Unknown'
         ]
       );
@@ -209,7 +209,7 @@ router.delete('/:id', verifyToken, checkPermission('delete:tasks'), async (req, 
     await db.query(
       `INSERT INTO audit_logs (user_id, action, resource, resource_id, ip_address, user_agent)
        VALUES ($1, $2, $3, $4, $5, $6)`,
-      [req.user.userId, 'DELETE', 'tasks', id, req.ip, req.headers['user-agent'] || 'Unknown']
+      [req.user.userId, 'DELETE', 'tasks', id, req.cleanedIp, req.headers['user-agent'] || 'Unknown']
     );
 
     res.json({ message: 'Task deleted successfully' });

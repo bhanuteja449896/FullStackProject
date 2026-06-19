@@ -84,7 +84,7 @@ router.post('/signup', async (req, res) => {
         deviceId,
         hashToken(accessToken),
         hashToken(refreshToken),
-        req.ip,
+        req.cleanedIp,
         req.headers['user-agent'] || 'Unknown',
       ]
     );
@@ -108,7 +108,7 @@ router.post('/signup', async (req, res) => {
     await db.query(
       `INSERT INTO audit_logs (user_id, action, resource, ip_address, user_agent)
        VALUES ($1, $2, $3, $4, $5)`,
-      [user.id, 'SIGNUP', 'auth', req.ip, req.headers['user-agent'] || 'Unknown']
+      [user.id, 'SIGNUP', 'auth', req.cleanedIp, req.headers['user-agent'] || 'Unknown']
     );
 
     res.status(201).json({
@@ -149,7 +149,7 @@ router.post('/login', async (req, res) => {
       await db.query(
         `INSERT INTO audit_logs (user_id, action, resource, ip_address, user_agent)
          VALUES ($1, $2, $3, $4, $5)`,
-        [user.id, 'FAILED_LOGIN_ATTEMPT', 'auth', req.ip, req.headers['user-agent'] || 'Unknown']
+        [user.id, 'FAILED_LOGIN_ATTEMPT', 'auth', req.cleanedIp, req.headers['user-agent'] || 'Unknown']
       );
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -166,7 +166,7 @@ router.post('/login', async (req, res) => {
 
     if (lastSession.rows.length > 0) {
       const prev = lastSession.rows[0];
-      const currentIp = req.ip;
+      const currentIp = req.cleanedIp;
       const currentUserAgent = req.headers['user-agent'] || 'Unknown';
 
       if (prev.ip_address !== currentIp || prev.user_agent !== currentUserAgent) {
@@ -214,7 +214,7 @@ router.post('/login', async (req, res) => {
         deviceId,
         hashToken(accessToken),
         hashToken(refreshToken),
-        req.ip,
+        req.cleanedIp,
         req.headers['user-agent'] || 'Unknown',
       ]
     );
@@ -244,7 +244,7 @@ router.post('/login', async (req, res) => {
     await db.query(
       `INSERT INTO audit_logs (user_id, action, resource, ip_address, user_agent)
        VALUES ($1, $2, $3, $4, $5)`,
-      [user.id, 'LOGIN', 'auth', req.ip, req.headers['user-agent'] || 'Unknown']
+      [user.id, 'LOGIN', 'auth', req.cleanedIp, req.headers['user-agent'] || 'Unknown']
     );
 
     res.json({
@@ -342,7 +342,7 @@ router.post('/logout', verifyToken, async (req, res) => {
     await db.query(
       `INSERT INTO audit_logs (user_id, action, resource, ip_address, user_agent)
        VALUES ($1, $2, $3, $4, $5)`,
-      [req.user.userId, 'LOGOUT', 'auth', req.ip, req.headers['user-agent'] || 'Unknown']
+      [req.user.userId, 'LOGOUT', 'auth', req.cleanedIp, req.headers['user-agent'] || 'Unknown']
     );
 
     res.json({ message: 'Logged out successfully' });
