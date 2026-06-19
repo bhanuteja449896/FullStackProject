@@ -12,6 +12,18 @@ const {
 } = require('../auth/jwt');
 const crypto = require('crypto');
 
+const getDeviceFromUA = (ua) => {
+  if (!ua) return 'Desktop Browser';
+  const uaLower = ua.toLowerCase();
+  if (uaLower.includes('mobile') || uaLower.includes('android') || uaLower.includes('iphone') || uaLower.includes('ipad')) {
+    return 'Mobile Browser';
+  }
+  if (uaLower.includes('tablet') || uaLower.includes('ipad') || uaLower.includes('kindle')) {
+    return 'Tablet Browser';
+  }
+  return 'Desktop Browser';
+};
+
 // ===== SIGNUP =====
 router.post('/signup', async (req, res) => {
   try {
@@ -68,7 +80,7 @@ router.post('/signup', async (req, res) => {
        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW() + INTERVAL '7 days')`,
       [
         user.id,
-        deviceName || 'Web Browser',
+        deviceName || getDeviceFromUA(req.headers['user-agent']),
         deviceId,
         hashToken(accessToken),
         hashToken(refreshToken),
@@ -198,7 +210,7 @@ router.post('/login', async (req, res) => {
        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW() + INTERVAL '7 days')`,
       [
         user.id,
-        deviceName || 'Web Browser',
+        deviceName || getDeviceFromUA(req.headers['user-agent']),
         deviceId,
         hashToken(accessToken),
         hashToken(refreshToken),

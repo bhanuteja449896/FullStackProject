@@ -22,12 +22,10 @@ export default function App() {
   // Form States
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
-  const [loginDevice, setLoginDevice] = useState('');
   
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [signupName, setSignupName] = useState('');
-  const [signupDevice, setSignupDevice] = useState('');
 
   const [taskTitle, setTaskTitle] = useState('');
   const [taskDesc, setTaskDesc] = useState('');
@@ -155,8 +153,7 @@ export default function App() {
         method: 'POST',
         body: {
           email: loginEmail,
-          password: loginPassword,
-          deviceName: loginDevice || 'Web Browser'
+          password: loginPassword
         }
       });
       setCurrentUser(data.user);
@@ -179,8 +176,7 @@ export default function App() {
         body: {
           email: signupEmail,
           password: signupPassword,
-          fullName: signupName,
-          deviceName: signupDevice || 'Web Browser'
+          fullName: signupName
         }
       });
       setCurrentUser(data.user);
@@ -380,9 +376,6 @@ export default function App() {
                 <label htmlFor="pass-login">Password</label>
                 <input id="pass-login" type="password" placeholder="••••••••" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} required />
                 
-                <label htmlFor="dev-login">Device Name</label>
-                <input id="dev-login" type="text" placeholder="e.g. Laptop, iPhone" value={loginDevice} onChange={e => setLoginDevice(e.target.value)} />
-                
                 <button type="submit" style={{ width: '100%', marginTop: '10px' }}>Authenticate</button>
               </form>
             ) : (
@@ -396,27 +389,10 @@ export default function App() {
                 <label htmlFor="name-signup">Full Name</label>
                 <input id="name-signup" type="text" placeholder="John Doe" value={signupName} onChange={e => setSignupName(e.target.value)} />
                 
-                <label htmlFor="dev-signup">Device Name</label>
-                <input id="dev-signup" type="text" placeholder="e.g. Laptop, Phone" value={signupDevice} onChange={e => setSignupDevice(e.target.value)} />
-                
                 <button type="submit" style={{ width: '100%', marginTop: '10px' }}>Create Account</button>
               </form>
             )}
 
-            <div className="test-accounts-info">
-              <strong>Demo Credentials (Password: password)</strong>
-              <table>
-                <tbody>
-                  <tr>
-                    <td><strong>Admin:</strong> admin@test.com</td>
-                    <td><strong>Manager:</strong> manager@test.com</td>
-                  </tr>
-                  <tr>
-                    <td colSpan="2"><strong>User:</strong> user@test.com</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
           </div>
         </div>
       ) : (
@@ -430,7 +406,6 @@ export default function App() {
               {(currentUser.role === 'admin' || currentUser.role === 'manager') && (
                 <button className={currentTab === 'create-task' ? 'active' : ''} onClick={() => setCurrentTab('create-task')}>Create Task</button>
               )}
-              <button className={currentTab === 'sessions' ? 'active' : ''} onClick={() => setCurrentTab('sessions')}>Devices</button>
               {currentUser.role === 'admin' && (
                 <button className={currentTab === 'admin' ? 'active' : ''} onClick={() => setCurrentTab('admin')}>Admin</button>
               )}
@@ -554,29 +529,7 @@ export default function App() {
               </div>
             )}
 
-            {currentTab === 'sessions' && (
-              <div className="card">
-                <h2>Registered Session Devices</h2>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>You are logged in on the following devices. You can revoke any session remotely.</p>
-                
-                <div className="session-grid">
-                  {sessions.map(s => (
-                    <div className="session-card" key={s.id}>
-                      <div className="session-info">
-                        <strong>{s.deviceName}</strong>
-                        <span>IP: {s.ipAddress}</span>
-                        <span>Logged in: {new Date(s.createdAt).toLocaleString()}</span>
-                        <span>Last active: {new Date(s.lastActivity).toLocaleString()}</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span className="session-status">Active</span>
-                        <button className="btn-danger" onClick={() => handleTerminateSession(s.id)} style={{ padding: '6px 12px', fontSize: '0.8rem' }}>Terminate</button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Devices section removed */}
 
             {currentTab === 'admin' && (
               <div>

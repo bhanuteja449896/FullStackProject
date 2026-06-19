@@ -158,9 +158,9 @@ WHERE r.name = 'user' AND p.name IN (
 );
 
 -- ===== CREATE TEST DATA =====
--- Password hash is $2a$10$T8VqU8/XQO/Z2v.rU5L63.r9g8K8rX.KxWk5C3t.z8kL4UjV4.Z2. for 'password'
+-- Password hash is $2a$10$sACOFZO../pMmGKA9DWBBujQRM0IU8EJwN9/et2vqC2DToH5VinLK for 'password'
 INSERT INTO users (email, password_hash, full_name, role_id, is_active)
 VALUES
-  ('admin@test.com', '$2a$10$T8VqU8/XQO/Z2v.rU5L63.r9g8K8rX.KxWk5C3t.z8kL4UjV4.Z2.', 'Admin User', (SELECT id FROM roles WHERE name = 'admin'), true),
-  ('manager@test.com', '$2a$10$T8VqU8/XQO/Z2v.rU5L63.r9g8K8rX.KxWk5C3t.z8kL4UjV4.Z2.', 'Manager User', (SELECT id FROM roles WHERE name = 'manager'), true),
-  ('user@test.com', '$2a$10$T8VqU8/XQO/Z2v.rU5L63.r9g8K8rX.KxWk5C3t.z8kL4UjV4.Z2.', 'Regular User', (SELECT id FROM roles WHERE name = 'user'), true);
+  ('admin@test.com', '$2a$10$sACOFZO../pMmGKA9DWBBujQRM0IU8EJwN9/et2vqC2DToH5VinLK', 'Admin User', (SELECT id FROM roles WHERE name = 'admin'), true),
+  ('manager@test.com', '$2a$10$sACOFZO../pMmGKA9DWBBujQRM0IU8EJwN9/et2vqC2DToH5VinLK', 'Manager User', (SELECT id FROM roles WHERE name = 'manager'), true),
+  ('user@test.com', '$2a$10$sACOFZO../pMmGKA9DWBBujQRM0IU8EJwN9/et2vqC2DToH5VinLK', 'Regular User', (SELECT id FROM roles WHERE name = 'user'), true);

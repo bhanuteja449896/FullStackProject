@@ -15,9 +15,31 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-// Enable CORS for development (just in case they run frontend from a dev server on a different port)
+// Enable CORS for local development and Vercel deployments
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:5000',
+  'http://127.0.0.1:5000'
+];
+
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5000', 'http://127.0.0.1:5000'],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, postman)
+    if (!origin) return callback(null, true);
+    
+    const isAllowed = allowedOrigins.includes(origin) || 
+                      origin.endsWith('.vercel.app') || 
+                      process.env.NODE_ENV !== 'production';
+                      
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
@@ -33,14 +55,14 @@ app.get('/api/health', (req, res) => {
 });
 
 // Serve frontend assets statically
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 // SPA Wildcard routing - redirect all non-API paths to index.html
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api')) {
     return next();
   }
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
 // 404 API Handler
@@ -60,3 +82,5 @@ app.listen(PORT, () => {
   console.log(` Task Manager server running on http://localhost:${PORT}`);
   console.log(`==================================================`);
 });
+
+module.exports = app;
