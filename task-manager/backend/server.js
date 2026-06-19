@@ -77,10 +77,12 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`==================================================`);
-  console.log(` Task Manager server running on http://localhost:${PORT}`);
-  console.log(`==================================================`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`==================================================`);
+    console.log(` Task Manager server running on http://localhost:${PORT}`);
+    console.log(`==================================================`);
+  });
+}
 
 module.exports = app;
